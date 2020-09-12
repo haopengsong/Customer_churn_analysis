@@ -1,7 +1,7 @@
 '''
  This project utilizes supervised learning models to identify 
  customers who are likely to cancel service in the near future.
- Also, extract and analyze top factors that contribute to user retention
+ Also, it will extract and analyze top factors that contribute to user retention
 '''
 
 
