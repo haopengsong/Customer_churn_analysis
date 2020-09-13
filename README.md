@@ -1,7 +1,7 @@
 '''
  This project utilizes supervised learning models to identify 
  customers who are likely to cancel service in the near future.
- Also, it will extract and analyze top factors that contribute to user retention
+ Also, it extracts and analyzes top factors that contribute to user retention
 '''
 
 
@@ -261,7 +261,7 @@ sns.displot(data['number_customer_service_calls'])
 
 
 
-    <seaborn.axisgrid.FacetGrid at 0x7fcd8d285580>
+    <seaborn.axisgrid.FacetGrid at 0x7f89b382fbb0>
 
 
 
@@ -972,14 +972,14 @@ data_encode_add.head()
 from sklearn.model_selection import train_test_split
 
 # 25% for testing
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.25)
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2)
 
 print('training data has %d rows and %d columns' % X_train.shape)
 print('testing data has %d rows and %d columns' % X_test.shape)
 ```
 
-    training data has 3750 rows and 17 columns
-    testing data has 1250 rows and 17 columns
+    training data has 4000 rows and 17 columns
+    testing data has 1000 rows and 17 columns
 
 
 
@@ -1011,7 +1011,6 @@ from sklearn.tree import DecisionTreeClassifier
 
 ```python
 # building a K-fold cross validation
-kfold_cv = StratifiedKFold(n_splits=5)
 random_state = 55
 clfs = [SVC(random_state=random_state), 
       RandomForestClassifier(random_state=random_state),
@@ -1021,10 +1020,11 @@ clfs = [SVC(random_state=random_state),
       LogisticRegression(random_state=random_state),
       XGBClassifier(random_state=random_state)]
 
+# running a 10-fold cross validation to get accuracy for each models
 cv_means = []
 cv_std = []
 for clf in clfs:
-    cv_results = cross_val_score(clf, X_train, Y_train, scoring="roc_auc", cv = kfold_cv)
+    cv_results = cross_val_score(clf, X_train, Y_train, scoring="roc_auc", cv = 10)
     cv_means.append(cv_results.mean())
     cv_std.append(cv_results.std())
     
@@ -1037,20 +1037,295 @@ print(cv_res)
 ```
 
         CV mean    CV std         Classifiers
-    0  0.910164  0.012292                 SVC
-    1  0.913549  0.018490        RandomForest
-    2  0.861596  0.033340            AdaBoost
-    3  0.915992  0.024136    GradientBoosting
-    4  0.835739  0.015323         KNeighboors
-    5  0.825327  0.018453  LogisticRegression
-    6  0.920703  0.019690             XGBoost
+    0  0.910335  0.022517                 SVC
+    1  0.916850  0.024724        RandomForest
+    2  0.875929  0.024866            AdaBoost
+    3  0.920333  0.020569    GradientBoosting
+    4  0.836144  0.023222         KNeighboors
+    5  0.824025  0.024542  LogisticRegression
+    6  0.923121  0.019115             XGBoost
 
 
 
 ![png](output_25_1.png)
 
 
+'''
+Choose RandomForest, GradientBoosting, KNeighboors, LogisticRegression, and XGBoost for 
+hyperparameters tunning
+'''
+
+#### 3.3 Hyperparameter tunning with grid search
+
 
 ```python
+# print grid search results
+def grid_search_output(gs):
+    print('Best precision: %0.3f' % gs.best_score_)
+    print('Best parameters set: \n', gs.best_params_)
+```
+
+##### Logistic Regression
+
+
+```python
+# possible hyperparameter options for logistic regression:
+# regularization: L1 or L2, regularization parameter lambda c
+lr_parameters = {
+    'penalty' : ('l1', 'l2'),
+    'C' : (1, 5, 10, 15, 20)
+}
+grid_lr = GridSearchCV(LogisticRegression(), lr_parameters, cv = 10)
+grid_lr.fit(X_train, Y_train)
+# Best parameters option
+grid_search_output(grid_lr)
+```
+
+    Best precision: 0.869
+    Best parameters set: 
+     {'C': 15, 'penalty': 'l2'}
+
+
+##### KNN
+
+
+```python
+# find the best k value
+knn_parameter = {
+    'n_neighbors' : [3,4,6, 7,9,12]
+}
+grid_knn = GridSearchCV(KNeighborsClassifier(), knn_parameter, cv=10)
+grid_knn.fit(X_train, Y_train)
+# best k
+grid_search_output(grid_knn)
+```
+
+    Best precision: 0.893
+    Best parameters set: 
+     {'n_neighbors': 3}
+
+
+##### Random Forest
+
+
+```python
+# find the best number of trees
+rf_parameter = {
+    'n_estimators' : [20, 50 ,80]
+}
+rf_grid = GridSearchCV(RandomForestClassifier(), rf_parameter, cv = 10)
+rf_grid.fit(X_train, Y_train)
+grid_search_output(rf_grid)
+```
+
+    Best precision: 0.957
+    Best parameters set: 
+     {'n_estimators': 80}
+
+
+##### Gradient Boosting
+
+
+```python
+# possible parameters for tunning
+# loss, n_estimators, learning_rate, max_depth, min_samples_leaf, max_features
+gb_parameters = {
+    'loss' : ['deviance', 'exponential'],
+    'n_estimators' : [100, 150],
+    'learning_rate' : [0.1, 0.2, 0.01],
+    'max_depth' : [3, 6],
+    'min_samples_leaf' : [5, 10, 15],
+    'max_features' : [0.2, 0.5]
+}
+gb_grid = GridSearchCV(GradientBoostingClassifier(), gb_parameters, cv = 10)
+gb_grid.fit(X_train, Y_train)
+grid_search_output(gb_grid)
+```
+
+##### XGBoost
+
+
+```python
+# xgboost tunning
+xgb_parameters = {
+    'learning_rate' : [0.01, 0.1, 0.05],
+    'max_depth' : [2, 4, 6],
+    'subsample' : [0.25, 0.5]
+}
+xgb_grid = GridSearchCV(XGBClassifier(), xgb_parameters, cv = 5)
+xgb_grid.fit(X_train, Y_train)
+grid_search_output(xgb_grid)
+```
+
+    Best precision: 0.956
+    Best parameters set: 
+     {'learning_rate': 0.05, 'max_depth': 6, 'subsample': 0.5}
+
+
+#### 3.4 Model Evaluation 
+##### 3.4.1 Confusion Matrix (Precision, Recall, Accuracy
+
+Identify churned customers as positive samples
+
+True Positive: churned
+
+Precision = tp / tp + fp
+
+high precision = not many retained users were predicated as churn users
+
+Recall(sensitivity) = tp / tp + fn 
+
+high recall = out of all churned customers, many of them were correctly identified
+
+
+```python
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import recall_score
+from sklearn.metrics import classification_report
+from sklearn.metrics import precision_score
+
+# calculate recall, precision and accuracy
+def cal_rpa(clf, cm):
+    tn = cm[0][0]
+    fp = cm[0][1]
+    fn = cm[1][0]
+    tp = cm[1][1]
+    accuracy  = (tp + tn) / (tp + fp + fn + tn + 0.0)
+    precision = tp / (tp + fp + 0.0)
+    recall = tp / (tp + fn + 0.0)
+    print (clf)
+    print ("Accuracy is: %0.3f" % accuracy)
+    print ("precision is: %0.3f" % precision)
+    print ("recall is: %0.3f" % recall)
+
+# print confusion matrix
+def draw_confusion_matrix(confusion_matrix):
+    class_values = ['Not churned', 'churned']
+    for cm in confusion_matrix:
+        clf, cm = cm[0], cm[1]
+        cal_rpa(clf, cm)
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        color_ax = ax.matshow(cm, interpolation = 'nearest', cmap=plt.get_cmap('Greens'))
+        plt.title('Predicated')
+        fig.colorbar(color_ax)
+        ax.set_xticklabels([''] + class_values)
+        ax.set_yticklabels([''] + class_values)
+        plt.xlabel('Confusion Mattrix for %s' % clf)
+        plt.ylabel('Actual')
+        plt.show()
+```
+
+
+```python
+# confusion matrix for RandomForest, GradientBoosting, KNeighboors, LogisticRegression, and XGBoost
+# cms = [
+#     ('RandomForest', confusion_matrix(Y_test, rf_grid.best_estimator_.predict(X_test))),
+#     ('GradientBoosting', confusion_matrix(Y_test, gb_grid.best_estimator_.predict(X_test))),
+#     ('KNeighboors', confusion_matrix(Y_test, grid_knn.best_estimator_.predict(X_test))),
+#     ('LogisticRegression', confusion_matrix(Y_test, grid_lr.best_estimator_.predict(X_test))),
+#     ('XGBoost', confusion_matrix(Y_test, xgb_grid.best_estimator_.predict(X_test))),
+# ]
+cms = [
+    ('RandomForest', confusion_matrix(Y_test, rf_grid.best_estimator_.predict(X_test))),
+    ('KNeighboors', confusion_matrix(Y_test, grid_knn.best_estimator_.predict(X_test))),
+    ('LogisticRegression', confusion_matrix(Y_test, grid_lr.best_estimator_.predict(X_test))),
+    ('XGBoost', confusion_matrix(Y_test, xgb_grid.best_estimator_.predict(X_test))),
+]
+draw_confusion_matrix(cms)
+```
+
+    RandomForest
+    Accuracy is: 0.961
+    precision is: 0.941
+    recall is: 0.776
+
+
+
+![png](output_42_1.png)
+
+
+    KNeighboors
+    Accuracy is: 0.897
+    precision is: 0.738
+    recall is: 0.434
+
+
+
+![png](output_42_3.png)
+
+
+    LogisticRegression
+    Accuracy is: 0.854
+    precision is: 0.465
+    recall is: 0.140
+
+
+
+![png](output_42_5.png)
+
+
+    XGBoost
+    Accuracy is: 0.963
+    precision is: 0.973
+    recall is: 0.762
+
+
+
+![png](output_42_7.png)
+
+
+##### 3.4.2 ROC_AUC
+
+
+```python
+from sklearn.metrics import roc_curve
+from sklearn.metrics import roc_auc_score
+
+def draw_roc_auc(pred, clf):
+    fpr, tpr, _ = roc_curve(Y_test, pred)
+    plt.figure(1)
+    plt.plot([0,1], [0,1], 'k--')
+    plt.plot(fpr, tpr, label = clf)
+    plt.xlabel('False Positive rate')
+    plt.ylabel('True Positive rate')
+    plt.title('ROC curve - %s' % clf)
+    plt.legend(loc='best')
+    plt.show()
+    print('AUC score for {} is {}'.format(clf, roc_auc_score(Y_test, pred)))
+
+    
+# pick XGBoost, KNN and LR for comparsion as they are the best/moderate/worst performer
+y_pred_xgb = xgb_grid.best_estimator_.predict_proba(X_test)[:,1]
+y_pred_lr = grid_lr.best_estimator_.predict_proba(X_test)[:,1]
+y_pred_knn = grid_knn.best_estimator_.predict_proba(X_test)[:,1]
+
+draw_roc_auc(y_pred_lr, 'LR')
+draw_roc_auc(y_pred_knn, 'KNN')
+draw_roc_auc(y_pred_xgb, 'XGBoost')
 
 ```
+
+
+![png](output_44_0.png)
+
+
+    AUC score for LR is 0.8152850649933497
+
+
+
+![png](output_44_2.png)
+
+
+    AUC score for KNN is 0.8288263661659228
+
+
+
+![png](output_44_4.png)
+
+
+    AUC score for XGBoost is 0.923076923076923
+
+
+### Part 4. Feature Selection
+
