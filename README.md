@@ -110,11 +110,11 @@ sns.displot(data['number_customer_service_calls'])
 
 
 
-![png](output_12_2.png)
+![png](/graph/output_12_2.png)
 
 
 
-![png](output_12_3.png)
+![png](/graph/output_12_3.png)
 
 
 
@@ -138,7 +138,7 @@ sns.heatmap(pcorr, annot=True, fmt=".3f", cmap="coolwarm", ax=ax)
 
 
 
-![png](output_13_1.png)
+![png](/graph/output_13_1.png)
 
 
 ### Part 2 - Feature Preprocessing
@@ -887,7 +887,7 @@ print(cv_res)
 
 
 
-![png](output_26_1.png)
+![png](/graph/output_26_1.png)
 
 
 '''
@@ -1087,7 +1087,7 @@ draw_confusion_matrix(cms)
 
 
 
-![png](output_43_1.png)
+![png](/graph/output_43_1.png)
 
 
     GradientBoosting
@@ -1097,7 +1097,7 @@ draw_confusion_matrix(cms)
 
 
 
-![png](output_43_3.png)
+![png](/graph/output_43_3.png)
 
 
     KNeighboors
@@ -1107,7 +1107,7 @@ draw_confusion_matrix(cms)
 
 
 
-![png](output_43_5.png)
+![png](/graph/output_43_5.png)
 
 
     LogisticRegression
@@ -1117,7 +1117,7 @@ draw_confusion_matrix(cms)
 
 
 
-![png](output_43_7.png)
+![png](/graph/output_43_7.png)
 
 
     XGBoost
@@ -1127,7 +1127,7 @@ draw_confusion_matrix(cms)
 
 
 
-![png](output_43_9.png)
+![png](/graph/output_43_9.png)
 
 
 ##### 3.4.2 ROC_AUC
@@ -1162,21 +1162,21 @@ draw_roc_auc(y_pred_xgb, 'XGBoost')
 ```
 
 
-![png](output_45_0.png)
+![png](/graph/output_45_0.png)
 
 
     AUC score for LR is 0.7938075221413418
 
 
 
-![png](output_45_2.png)
+![png](/graph/output_45_2.png)
 
 
     AUC score for KNN is 0.7837128053060356
 
 
 
-![png](output_45_4.png)
+![png](/graph/output_45_4.png)
 
 
     AUC score for XGBoost is 0.9007089961277296
