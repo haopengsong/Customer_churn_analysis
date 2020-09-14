@@ -11,6 +11,17 @@
 
 
 ```python
+from google.colab import drive
+drive.mount("/content/drive")
+```
+
+    Mounted at /content/drive
+
+
+
+```python
+!pip install seaborn --upgrade
+!pip install xgboost
 import pandas as pd
 import numpy as np
 import imblearn
@@ -20,180 +31,9 @@ warnings.filterwarnings('ignore')
 # to show all the columns
 pd.set_option('display.max_columns', None)
 
-data = pd.read_csv('../data/churn.all')
+data = pd.read_csv('/content/drive/My Drive/Colab Notebooks/churn.all')
 data.head()
 ```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>state</th>
-      <th>account_length</th>
-      <th>area_code</th>
-      <th>phone_number</th>
-      <th>intl_plan</th>
-      <th>voice_mail_plan</th>
-      <th>number_vmail_messages</th>
-      <th>total_day_minutes</th>
-      <th>total_day_calls</th>
-      <th>total_day_charge</th>
-      <th>total_eve_minutes</th>
-      <th>total_eve_calls</th>
-      <th>total_eve_charge</th>
-      <th>total_night_minutes</th>
-      <th>total_night_calls</th>
-      <th>total_night_charge</th>
-      <th>total_intl_minutes</th>
-      <th>total_intl_calls</th>
-      <th>total_intl_charge</th>
-      <th>number_customer_service_calls</th>
-      <th>churned</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>KS</td>
-      <td>128</td>
-      <td>415</td>
-      <td>382-4657</td>
-      <td>no</td>
-      <td>yes</td>
-      <td>25</td>
-      <td>265.1</td>
-      <td>110</td>
-      <td>45.07</td>
-      <td>197.4</td>
-      <td>99</td>
-      <td>16.78</td>
-      <td>244.7</td>
-      <td>91</td>
-      <td>11.01</td>
-      <td>10.0</td>
-      <td>3</td>
-      <td>2.70</td>
-      <td>1</td>
-      <td>False.</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>OH</td>
-      <td>107</td>
-      <td>415</td>
-      <td>371-7191</td>
-      <td>no</td>
-      <td>yes</td>
-      <td>26</td>
-      <td>161.6</td>
-      <td>123</td>
-      <td>27.47</td>
-      <td>195.5</td>
-      <td>103</td>
-      <td>16.62</td>
-      <td>254.4</td>
-      <td>103</td>
-      <td>11.45</td>
-      <td>13.7</td>
-      <td>3</td>
-      <td>3.70</td>
-      <td>1</td>
-      <td>False.</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>NJ</td>
-      <td>137</td>
-      <td>415</td>
-      <td>358-1921</td>
-      <td>no</td>
-      <td>no</td>
-      <td>0</td>
-      <td>243.4</td>
-      <td>114</td>
-      <td>41.38</td>
-      <td>121.2</td>
-      <td>110</td>
-      <td>10.30</td>
-      <td>162.6</td>
-      <td>104</td>
-      <td>7.32</td>
-      <td>12.2</td>
-      <td>5</td>
-      <td>3.29</td>
-      <td>0</td>
-      <td>False.</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>OH</td>
-      <td>84</td>
-      <td>408</td>
-      <td>375-9999</td>
-      <td>yes</td>
-      <td>no</td>
-      <td>0</td>
-      <td>299.4</td>
-      <td>71</td>
-      <td>50.90</td>
-      <td>61.9</td>
-      <td>88</td>
-      <td>5.26</td>
-      <td>196.9</td>
-      <td>89</td>
-      <td>8.86</td>
-      <td>6.6</td>
-      <td>7</td>
-      <td>1.78</td>
-      <td>2</td>
-      <td>False.</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>OK</td>
-      <td>75</td>
-      <td>415</td>
-      <td>330-6626</td>
-      <td>yes</td>
-      <td>no</td>
-      <td>0</td>
-      <td>166.7</td>
-      <td>113</td>
-      <td>28.34</td>
-      <td>148.3</td>
-      <td>122</td>
-      <td>12.61</td>
-      <td>186.9</td>
-      <td>121</td>
-      <td>8.41</td>
-      <td>10.1</td>
-      <td>3</td>
-      <td>2.73</td>
-      <td>3</td>
-      <td>False.</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
 
 
 ```python
@@ -261,20 +101,20 @@ sns.displot(data['number_customer_service_calls'])
 
 
 
-    <seaborn.axisgrid.FacetGrid at 0x7f89b382fbb0>
+    <seaborn.axisgrid.FacetGrid at 0x7fb79e94d630>
 
 
 
 
-![png](output_11_1.png)
+![png](output_12_1.png)
 
 
 
-![png](output_11_2.png)
+![png](output_12_2.png)
 
 
 
-![png](output_11_3.png)
+![png](output_12_3.png)
 
 
 
@@ -293,12 +133,12 @@ sns.heatmap(pcorr, annot=True, fmt=".3f", cmap="coolwarm", ax=ax)
 
 
 
-    <AxesSubplot:>
+    <matplotlib.axes._subplots.AxesSubplot at 0x7fb79f1b4dd8>
 
 
 
 
-![png](output_12_1.png)
+![png](output_13_1.png)
 
 
 ### Part 2 - Feature Preprocessing
@@ -313,8 +153,8 @@ print (pearsonr(data['total_intl_minutes'], data['total_intl_charge'])[0])
 print (pearsonr(data['total_intl_minutes'], data['total_night_calls'])[0])
 ```
 
-    0.9999926570208368
-    0.0003907572996283259
+    0.9999926570208357
+    0.00039075729962830945
 
 
 
@@ -1037,17 +877,17 @@ print(cv_res)
 ```
 
         CV mean    CV std         Classifiers
-    0  0.910335  0.022517                 SVC
-    1  0.916850  0.024724        RandomForest
-    2  0.875929  0.024866            AdaBoost
-    3  0.920333  0.020569    GradientBoosting
-    4  0.836144  0.023222         KNeighboors
-    5  0.824025  0.024542  LogisticRegression
-    6  0.923121  0.019115             XGBoost
+    0  0.919193  0.024271                 SVC
+    1  0.925472  0.029145        RandomForest
+    2  0.877742  0.025026            AdaBoost
+    3  0.926964  0.027983    GradientBoosting
+    4  0.852233  0.021067         KNeighboors
+    5  0.830574  0.027550  LogisticRegression
+    6  0.929314  0.029023             XGBoost
 
 
 
-![png](output_25_1.png)
+![png](output_26_1.png)
 
 
 '''
@@ -1083,7 +923,7 @@ grid_search_output(grid_lr)
 
     Best precision: 0.869
     Best parameters set: 
-     {'C': 15, 'penalty': 'l2'}
+     {'C': 1, 'penalty': 'l2'}
 
 
 ##### KNN
@@ -1100,7 +940,7 @@ grid_knn.fit(X_train, Y_train)
 grid_search_output(grid_knn)
 ```
 
-    Best precision: 0.893
+    Best precision: 0.902
     Best parameters set: 
      {'n_neighbors': 3}
 
@@ -1118,9 +958,9 @@ rf_grid.fit(X_train, Y_train)
 grid_search_output(rf_grid)
 ```
 
-    Best precision: 0.957
+    Best precision: 0.959
     Best parameters set: 
-     {'n_estimators': 80}
+     {'n_estimators': 50}
 
 
 ##### Gradient Boosting
@@ -1142,6 +982,11 @@ gb_grid.fit(X_train, Y_train)
 grid_search_output(gb_grid)
 ```
 
+    Best precision: 0.963
+    Best parameters set: 
+     {'learning_rate': 0.2, 'loss': 'deviance', 'max_depth': 6, 'max_features': 0.5, 'min_samples_leaf': 5, 'n_estimators': 100}
+
+
 ##### XGBoost
 
 
@@ -1157,9 +1002,9 @@ xgb_grid.fit(X_train, Y_train)
 grid_search_output(xgb_grid)
 ```
 
-    Best precision: 0.956
+    Best precision: 0.961
     Best parameters set: 
-     {'learning_rate': 0.05, 'max_depth': 6, 'subsample': 0.5}
+     {'learning_rate': 0.1, 'max_depth': 6, 'subsample': 0.5}
 
 
 #### 3.4 Model Evaluation 
@@ -1219,60 +1064,70 @@ def draw_confusion_matrix(confusion_matrix):
 
 ```python
 # confusion matrix for RandomForest, GradientBoosting, KNeighboors, LogisticRegression, and XGBoost
-# cms = [
-#     ('RandomForest', confusion_matrix(Y_test, rf_grid.best_estimator_.predict(X_test))),
-#     ('GradientBoosting', confusion_matrix(Y_test, gb_grid.best_estimator_.predict(X_test))),
-#     ('KNeighboors', confusion_matrix(Y_test, grid_knn.best_estimator_.predict(X_test))),
-#     ('LogisticRegression', confusion_matrix(Y_test, grid_lr.best_estimator_.predict(X_test))),
-#     ('XGBoost', confusion_matrix(Y_test, xgb_grid.best_estimator_.predict(X_test))),
-# ]
 cms = [
     ('RandomForest', confusion_matrix(Y_test, rf_grid.best_estimator_.predict(X_test))),
+    ('GradientBoosting', confusion_matrix(Y_test, gb_grid.best_estimator_.predict(X_test))),
     ('KNeighboors', confusion_matrix(Y_test, grid_knn.best_estimator_.predict(X_test))),
     ('LogisticRegression', confusion_matrix(Y_test, grid_lr.best_estimator_.predict(X_test))),
     ('XGBoost', confusion_matrix(Y_test, xgb_grid.best_estimator_.predict(X_test))),
 ]
+# cms = [
+#     ('RandomForest', confusion_matrix(Y_test, rf_grid.best_estimator_.predict(X_test))),
+#     ('KNeighboors', confusion_matrix(Y_test, grid_knn.best_estimator_.predict(X_test))),
+#     ('LogisticRegression', confusion_matrix(Y_test, grid_lr.best_estimator_.predict(X_test))),
+#     ('XGBoost', confusion_matrix(Y_test, xgb_grid.best_estimator_.predict(X_test))),
+# ]
 draw_confusion_matrix(cms)
 ```
 
     RandomForest
-    Accuracy is: 0.961
-    precision is: 0.941
-    recall is: 0.776
+    Accuracy is: 0.952
+    precision is: 0.924
+    recall is: 0.738
 
 
 
-![png](output_42_1.png)
+![png](output_43_1.png)
+
+
+    GradientBoosting
+    Accuracy is: 0.951
+    precision is: 0.897
+    recall is: 0.758
+
+
+
+![png](output_43_3.png)
 
 
     KNeighboors
-    Accuracy is: 0.897
-    precision is: 0.738
-    recall is: 0.434
+    Accuracy is: 0.885
+    precision is: 0.758
+    recall is: 0.336
 
 
 
-![png](output_42_3.png)
+![png](output_43_5.png)
 
 
     LogisticRegression
-    Accuracy is: 0.854
-    precision is: 0.465
-    recall is: 0.140
+    Accuracy is: 0.853
+    precision is: 0.520
+    recall is: 0.174
 
 
 
-![png](output_42_5.png)
+![png](output_43_7.png)
 
 
     XGBoost
-    Accuracy is: 0.963
-    precision is: 0.973
-    recall is: 0.762
+    Accuracy is: 0.960
+    precision is: 0.950
+    recall is: 0.772
 
 
 
-![png](output_42_7.png)
+![png](output_43_9.png)
 
 
 ##### 3.4.2 ROC_AUC
@@ -1307,25 +1162,147 @@ draw_roc_auc(y_pred_xgb, 'XGBoost')
 ```
 
 
-![png](output_44_0.png)
+![png](output_45_0.png)
 
 
-    AUC score for LR is 0.8152850649933497
-
-
-
-![png](output_44_2.png)
-
-
-    AUC score for KNN is 0.8288263661659228
+    AUC score for LR is 0.7938075221413418
 
 
 
-![png](output_44_4.png)
+![png](output_45_2.png)
 
 
-    AUC score for XGBoost is 0.923076923076923
+    AUC score for KNN is 0.7837128053060356
+
+
+
+![png](output_45_4.png)
+
+
+    AUC score for XGBoost is 0.9007089961277296
 
 
 ### Part 4. Feature Selection
+#### Part 4.1 Feature selection for Logistic Regression
+'''
+By examining the correlation graph, features which are highly correlated 
+are (total_day_minutes, total_day_charge), (total_eve_minutes, total_eve_charge) and (total_intl_minutes, total_intl_charge). 
+Before selecting features for using, let's output their weights
+to convince our intuition
+'''
 
+
+```python
+# use L1(LASSO) regularizaiton on LR and check for coefficient
+scaler = StandardScaler()
+lr_l1_x = scaler.fit_transform(X)
+lr_l1 = LogisticRegression(solver = 'saga', penalty='l1', C = 0.05)
+lr_l1.fit(lr_l1_x, Y)
+print(lr_l1.coef_[0])
+
+print('LR coefficients with L1 regularization: ')
+for k, v in sorted(zip(data_train.columns,  
+                       map(lambda x : round(x, 4), lr_l1.coef_[0])),
+                  key=lambda kv : (-abs(kv[1]), kv[0])):
+    print(k + ": " + str(v))
+```
+
+    [ 0.01568823  0.57140715 -0.40522936  0.          0.34977106  0.01046046
+      0.31960665  0.14592946  0.          0.15265304  0.08731145  0.
+      0.06431885  0.08558504 -0.12382329  0.1057526   0.61807965]
+    LR coefficients with L1 regularization: 
+    number_customer_service_calls: 0.6181
+    intl_plan: 0.5714
+    voice_mail_plan: -0.4052
+    total_day_minutes: 0.3498
+    total_day_charge: 0.3196
+    total_eve_charge: 0.1527
+    total_eve_minutes: 0.1459
+    total_intl_calls: -0.1238
+    total_intl_charge: 0.1058
+    total_night_minutes: 0.0873
+    total_intl_minutes: 0.0856
+    total_night_charge: 0.0643
+    account_length: 0.0157
+    total_day_calls: 0.0105
+    number_vmail_messages: 0.0
+    total_eve_calls: 0.0
+    total_night_calls: 0.0
+
+
+
+```python
+# use L2(ridge) regularization on LR and check for coefficient
+
+lr_l2_x = scaler.fit_transform(X)
+lr_l2 = LogisticRegression(penalty='l2', C = 0.05)
+lr_l2.fit(lr_l2_x, Y)
+print(lr_l2.coef_[0])
+
+print('LR coefficients with L2 regularization: ')
+for k, v in sorted(zip(data_train.columns,  
+                       map(lambda x : round(x, 4), lr_l2.coef_[0])),
+                  key=lambda kv : (-abs(kv[1]), kv[0])):
+    print(k + ": " + str(v))
+```
+
+    [ 0.05385442  0.59306133 -0.49450361  0.05195019  0.35609257  0.04879417
+      0.35572945  0.17269978 -0.02871012  0.17281055  0.09729187 -0.03095169
+      0.09697765  0.117511   -0.16624232  0.11774349  0.64532563]
+    LR coefficients with L2 regularization: 
+    number_customer_service_calls: 0.6453
+    intl_plan: 0.5931
+    voice_mail_plan: -0.4945
+    total_day_minutes: 0.3561
+    total_day_charge: 0.3557
+    total_eve_charge: 0.1728
+    total_eve_minutes: 0.1727
+    total_intl_calls: -0.1662
+    total_intl_charge: 0.1177
+    total_intl_minutes: 0.1175
+    total_night_minutes: 0.0973
+    total_night_charge: 0.097
+    account_length: 0.0539
+    number_vmail_messages: 0.052
+    total_day_calls: 0.0488
+    total_night_calls: -0.031
+    total_eve_calls: -0.0287
+
+
+#### 4.2 Random forest model - feature importance discussion
+
+
+```python
+# check feature importance of random forest for feature selection
+forest = RandomForestClassifier()
+forest.fit(X, Y)
+importances = forest.feature_importances_
+# print the feature ranking
+for k, v in sorted(zip(map(lambda x : round(x, 4), importances),
+                      X.columns), reverse = True):
+    print(v + ": " + str(k))
+```
+
+    total_day_minutes: 0.1458
+    total_day_charge: 0.1415
+    number_customer_service_calls: 0.1175
+    intl_plan: 0.0881
+    total_eve_charge: 0.0648
+    total_eve_minutes: 0.0639
+    total_intl_calls: 0.0567
+    total_intl_charge: 0.0416
+    total_night_minutes: 0.0409
+    total_intl_minutes: 0.0405
+    total_night_charge: 0.0394
+    account_length: 0.0285
+    total_day_calls: 0.0281
+    total_night_calls: 0.0267
+    number_vmail_messages: 0.0265
+    voice_mail_plan: 0.0253
+    total_eve_calls: 0.0241
+
+
+
+```python
+
+```
