@@ -106,7 +106,7 @@ sns.displot(data['number_customer_service_calls'])
 
 
 
-![png](output_12_1.png)
+![png](/graph/output_12_1.png)
 
 
 
