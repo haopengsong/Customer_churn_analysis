@@ -1,5 +1,4 @@
-
- **Description**
+ ### Description
  
  This project utilized several supervised learning models to identify 
  customers who are likely to cancel services in the near future.
@@ -8,8 +7,6 @@
  
  The model formulated in this project would be suitable for predicting whether 
  a customer would or would not drop their subscriptions.
- 
-
 
 ### Part 1 - Data Exploration 
 
@@ -21,7 +18,7 @@ from google.colab import drive
 drive.mount("/content/drive")
 ```
 
-    Mounted at /content/drive
+    Drive already mounted at /content/drive; to attempt to forcibly remount, call drive.mount("/content/drive", force_remount=True).
 
 
 
@@ -40,6 +37,199 @@ pd.set_option('display.max_columns', None)
 data = pd.read_csv('/content/drive/My Drive/Colab Notebooks/churn.all')
 data.head()
 ```
+
+    Requirement already up-to-date: seaborn in /usr/local/lib/python3.6/dist-packages (0.11.0)
+    Requirement already satisfied, skipping upgrade: numpy>=1.15 in /usr/local/lib/python3.6/dist-packages (from seaborn) (1.18.5)
+    Requirement already satisfied, skipping upgrade: pandas>=0.23 in /usr/local/lib/python3.6/dist-packages (from seaborn) (1.0.5)
+    Requirement already satisfied, skipping upgrade: scipy>=1.0 in /usr/local/lib/python3.6/dist-packages (from seaborn) (1.4.1)
+    Requirement already satisfied, skipping upgrade: matplotlib>=2.2 in /usr/local/lib/python3.6/dist-packages (from seaborn) (3.2.2)
+    Requirement already satisfied, skipping upgrade: python-dateutil>=2.6.1 in /usr/local/lib/python3.6/dist-packages (from pandas>=0.23->seaborn) (2.8.1)
+    Requirement already satisfied, skipping upgrade: pytz>=2017.2 in /usr/local/lib/python3.6/dist-packages (from pandas>=0.23->seaborn) (2018.9)
+    Requirement already satisfied, skipping upgrade: kiwisolver>=1.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib>=2.2->seaborn) (1.2.0)
+    Requirement already satisfied, skipping upgrade: cycler>=0.10 in /usr/local/lib/python3.6/dist-packages (from matplotlib>=2.2->seaborn) (0.10.0)
+    Requirement already satisfied, skipping upgrade: pyparsing!=2.0.4,!=2.1.2,!=2.1.6,>=2.0.1 in /usr/local/lib/python3.6/dist-packages (from matplotlib>=2.2->seaborn) (2.4.7)
+    Requirement already satisfied, skipping upgrade: six>=1.5 in /usr/local/lib/python3.6/dist-packages (from python-dateutil>=2.6.1->pandas>=0.23->seaborn) (1.15.0)
+    Requirement already satisfied: xgboost in /usr/local/lib/python3.6/dist-packages (0.90)
+    Requirement already satisfied: scipy in /usr/local/lib/python3.6/dist-packages (from xgboost) (1.4.1)
+    Requirement already satisfied: numpy in /usr/local/lib/python3.6/dist-packages (from xgboost) (1.18.5)
+
+
+    /usr/local/lib/python3.6/dist-packages/sklearn/externals/six.py:31: FutureWarning: The module is deprecated in version 0.21 and will be removed in version 0.23 since we've dropped support for Python 2.7. Please rely on the official version of six (https://pypi.org/project/six/).
+      "(https://pypi.org/project/six/).", FutureWarning)
+    /usr/local/lib/python3.6/dist-packages/sklearn/utils/deprecation.py:144: FutureWarning: The sklearn.neighbors.base module is  deprecated in version 0.22 and will be removed in version 0.24. The corresponding classes / functions should instead be imported from sklearn.neighbors. Anything that cannot be imported from sklearn.neighbors is now part of the private API.
+      warnings.warn(message, FutureWarning)
+
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>state</th>
+      <th>account_length</th>
+      <th>area_code</th>
+      <th>phone_number</th>
+      <th>intl_plan</th>
+      <th>voice_mail_plan</th>
+      <th>number_vmail_messages</th>
+      <th>total_day_minutes</th>
+      <th>total_day_calls</th>
+      <th>total_day_charge</th>
+      <th>total_eve_minutes</th>
+      <th>total_eve_calls</th>
+      <th>total_eve_charge</th>
+      <th>total_night_minutes</th>
+      <th>total_night_calls</th>
+      <th>total_night_charge</th>
+      <th>total_intl_minutes</th>
+      <th>total_intl_calls</th>
+      <th>total_intl_charge</th>
+      <th>number_customer_service_calls</th>
+      <th>churned</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>KS</td>
+      <td>128</td>
+      <td>415</td>
+      <td>382-4657</td>
+      <td>no</td>
+      <td>yes</td>
+      <td>25</td>
+      <td>265.1</td>
+      <td>110</td>
+      <td>45.07</td>
+      <td>197.4</td>
+      <td>99</td>
+      <td>16.78</td>
+      <td>244.7</td>
+      <td>91</td>
+      <td>11.01</td>
+      <td>10.0</td>
+      <td>3</td>
+      <td>2.70</td>
+      <td>1</td>
+      <td>False.</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>OH</td>
+      <td>107</td>
+      <td>415</td>
+      <td>371-7191</td>
+      <td>no</td>
+      <td>yes</td>
+      <td>26</td>
+      <td>161.6</td>
+      <td>123</td>
+      <td>27.47</td>
+      <td>195.5</td>
+      <td>103</td>
+      <td>16.62</td>
+      <td>254.4</td>
+      <td>103</td>
+      <td>11.45</td>
+      <td>13.7</td>
+      <td>3</td>
+      <td>3.70</td>
+      <td>1</td>
+      <td>False.</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>NJ</td>
+      <td>137</td>
+      <td>415</td>
+      <td>358-1921</td>
+      <td>no</td>
+      <td>no</td>
+      <td>0</td>
+      <td>243.4</td>
+      <td>114</td>
+      <td>41.38</td>
+      <td>121.2</td>
+      <td>110</td>
+      <td>10.30</td>
+      <td>162.6</td>
+      <td>104</td>
+      <td>7.32</td>
+      <td>12.2</td>
+      <td>5</td>
+      <td>3.29</td>
+      <td>0</td>
+      <td>False.</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>OH</td>
+      <td>84</td>
+      <td>408</td>
+      <td>375-9999</td>
+      <td>yes</td>
+      <td>no</td>
+      <td>0</td>
+      <td>299.4</td>
+      <td>71</td>
+      <td>50.90</td>
+      <td>61.9</td>
+      <td>88</td>
+      <td>5.26</td>
+      <td>196.9</td>
+      <td>89</td>
+      <td>8.86</td>
+      <td>6.6</td>
+      <td>7</td>
+      <td>1.78</td>
+      <td>2</td>
+      <td>False.</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>OK</td>
+      <td>75</td>
+      <td>415</td>
+      <td>330-6626</td>
+      <td>yes</td>
+      <td>no</td>
+      <td>0</td>
+      <td>166.7</td>
+      <td>113</td>
+      <td>28.34</td>
+      <td>148.3</td>
+      <td>122</td>
+      <td>12.61</td>
+      <td>186.9</td>
+      <td>121</td>
+      <td>8.41</td>
+      <td>10.1</td>
+      <td>3</td>
+      <td>2.73</td>
+      <td>3</td>
+      <td>False.</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 
 
 ```python
@@ -107,7 +297,7 @@ sns.displot(data['number_customer_service_calls'])
 
 
 
-    <seaborn.axisgrid.FacetGrid at 0x7fb79e94d630>
+    <seaborn.axisgrid.FacetGrid at 0x7f5d5c8b5a20>
 
 
 
@@ -126,20 +316,17 @@ sns.displot(data['number_customer_service_calls'])
 
 ```python
 # calculate the Pearson correlations between all continuous features
-pcorr = data[["account_length", "number_vmail_messages", "total_eve_calls", "total_day_minutes",
-                    "total_day_calls", "total_day_charge", "total_eve_minutes",
-                     "total_eve_charge", "total_night_minutes",
-                    "total_night_calls", "total_intl_minutes", "total_intl_calls",
-                    "total_intl_charge"]].corr()
-# print(pcorr)
+data['churned'] = data['churned'].map({'False.' : 0, 'True.': 1})
+pcorr = data.corr()
+#print(pcorr)
 fig, ax = plt.subplots(figsize=(22,12))
-sns.heatmap(pcorr, annot=True, fmt=".3f", cmap="coolwarm", ax=ax)
+sns.heatmap(pcorr, annot=True, fmt=".2f", cmap="coolwarm", ax=ax)
 ```
 
 
 
 
-    <matplotlib.axes._subplots.AxesSubplot at 0x7fb79f1b4dd8>
+    <matplotlib.axes._subplots.AxesSubplot at 0x7f5d5bea8f28>
 
 
 
@@ -147,7 +334,9 @@ sns.heatmap(pcorr, annot=True, fmt=".3f", cmap="coolwarm", ax=ax)
 ![png](/graph/output_13_1.png)
 
 
-### Part 2 - Feature Preprocessing
+After examining the heatmap, we can conclude that features that have a linear correlation with churned customers are **'total_day_minutes'**, **'total_day_charge'** and **'number_customer_service_calls'**
+
+### Part 2 - Feature Preprocessing and Selection
 
 
 ```python
@@ -166,7 +355,7 @@ print (pearsonr(data['total_intl_minutes'], data['total_night_calls'])[0])
 
 ```python
 # get true Y output - ground truth
-Y = np.where(data['churned'] == 'True.', 1, 0)
+Y = data['churned']
 
 # drop unnecessary features
 data_train = data.drop(['state','area_code','phone_number','churned'], axis = 1)
@@ -883,17 +1072,17 @@ print(cv_res)
 ```
 
         CV mean    CV std         Classifiers
-    0  0.919193  0.024271                 SVC
-    1  0.925472  0.029145        RandomForest
-    2  0.877742  0.025026            AdaBoost
-    3  0.926964  0.027983    GradientBoosting
-    4  0.852233  0.021067         KNeighboors
-    5  0.830574  0.027550  LogisticRegression
-    6  0.929314  0.029023             XGBoost
+    0  0.909970  0.026767                 SVC
+    1  0.915946  0.033483        RandomForest
+    2  0.865312  0.024128            AdaBoost
+    3  0.922301  0.024970    GradientBoosting
+    4  0.847158  0.027540         KNeighboors
+    5  0.826568  0.030604  LogisticRegression
+    6  0.923936  0.023670             XGBoost
 
 
 
-![png](/graph/output_26_1.png)
+![png](/graph/output_27_1.png)
 
 
 '''
@@ -927,7 +1116,7 @@ grid_lr.fit(X_train, Y_train)
 grid_search_output(grid_lr)
 ```
 
-    Best precision: 0.869
+    Best precision: 0.863
     Best parameters set: 
      {'C': 1, 'penalty': 'l2'}
 
@@ -946,7 +1135,7 @@ grid_knn.fit(X_train, Y_train)
 grid_search_output(grid_knn)
 ```
 
-    Best precision: 0.902
+    Best precision: 0.900
     Best parameters set: 
      {'n_neighbors': 3}
 
@@ -964,7 +1153,7 @@ rf_grid.fit(X_train, Y_train)
 grid_search_output(rf_grid)
 ```
 
-    Best precision: 0.959
+    Best precision: 0.956
     Best parameters set: 
      {'n_estimators': 50}
 
@@ -988,9 +1177,9 @@ gb_grid.fit(X_train, Y_train)
 grid_search_output(gb_grid)
 ```
 
-    Best precision: 0.963
+    Best precision: 0.961
     Best parameters set: 
-     {'learning_rate': 0.2, 'loss': 'deviance', 'max_depth': 6, 'max_features': 0.5, 'min_samples_leaf': 5, 'n_estimators': 100}
+     {'learning_rate': 0.1, 'loss': 'deviance', 'max_depth': 6, 'max_features': 0.5, 'min_samples_leaf': 5, 'n_estimators': 100}
 
 
 ##### XGBoost
@@ -1008,9 +1197,9 @@ xgb_grid.fit(X_train, Y_train)
 grid_search_output(xgb_grid)
 ```
 
-    Best precision: 0.961
+    Best precision: 0.958
     Best parameters set: 
-     {'learning_rate': 0.1, 'max_depth': 6, 'subsample': 0.5}
+     {'learning_rate': 0.05, 'max_depth': 4, 'subsample': 0.5}
 
 
 #### 3.4 Model Evaluation 
@@ -1087,53 +1276,53 @@ draw_confusion_matrix(cms)
 ```
 
     RandomForest
-    Accuracy is: 0.952
-    precision is: 0.924
-    recall is: 0.738
+    Accuracy is: 0.955
+    precision is: 0.938
+    recall is: 0.734
 
 
 
-![png](/graph/output_43_1.png)
+![png](/graph/output_44_1.png)
 
 
     GradientBoosting
-    Accuracy is: 0.951
-    precision is: 0.897
-    recall is: 0.758
+    Accuracy is: 0.957
+    precision is: 0.939
+    recall is: 0.748
 
 
 
-![png](/graph/output_43_3.png)
+![png](/graph/output_44_3.png)
 
 
     KNeighboors
-    Accuracy is: 0.885
-    precision is: 0.758
-    recall is: 0.336
+    Accuracy is: 0.884
+    precision is: 0.729
+    recall is: 0.301
 
 
 
-![png](/graph/output_43_5.png)
+![png](/graph/output_44_5.png)
 
 
     LogisticRegression
-    Accuracy is: 0.853
-    precision is: 0.520
-    recall is: 0.174
+    Accuracy is: 0.870
+    precision is: 0.644
+    recall is: 0.203
 
 
 
-![png](/graph/output_43_7.png)
+![png](/graph/output_44_7.png)
 
 
     XGBoost
-    Accuracy is: 0.960
-    precision is: 0.950
-    recall is: 0.772
+    Accuracy is: 0.958
+    precision is: 0.963
+    recall is: 0.734
 
 
 
-![png](/graph/output_43_9.png)
+![png](/graph/output_44_9.png)
 
 
 ##### 3.4.2 ROC_AUC
@@ -1168,33 +1357,31 @@ draw_roc_auc(y_pred_xgb, 'XGBoost')
 ```
 
 
-![png](/graph/output_45_0.png)
+![png](/graph/output_46_0.png)
 
 
-    AUC score for LR is 0.7938075221413418
-
-
-
-![png](/graph/output_45_2.png)
-
-
-    AUC score for KNN is 0.7837128053060356
+    AUC score for LR is 0.8262845672413934
 
 
 
-![png](/graph/output_45_4.png)
+![png](/graph/output_46_2.png)
 
 
-    AUC score for XGBoost is 0.9007089961277296
+    AUC score for KNN is 0.795693221597539
+
+
+
+![png](/graph/output_46_4.png)
+
+
+    AUC score for XGBoost is 0.917528212744082
 
 
 ### Part 4. Feature Selection
 #### Part 4.1 Feature selection for Logistic Regression
 '''
 By examining the correlation graph, features which are highly correlated 
-are (total_day_minutes, total_day_charge), (total_eve_minutes, total_eve_charge) and (total_intl_minutes, total_intl_charge). 
-Before selecting features for using, let's output their weights
-to convince our intuition
+are (total_day_minutes, total_day_charge), (total_eve_minutes, total_eve_charge) and (total_intl_minutes, total_intl_charge)
 '''
 
 
@@ -1213,22 +1400,22 @@ for k, v in sorted(zip(data_train.columns,
     print(k + ": " + str(v))
 ```
 
-    [ 0.01568823  0.57140715 -0.40522936  0.          0.34977106  0.01046046
-      0.31960665  0.14592946  0.          0.15265304  0.08731145  0.
-      0.06431885  0.08558504 -0.12382329  0.1057526   0.61807965]
+    [ 0.01568818  0.57140723 -0.40522927  0.          0.34954893  0.01046044
+      0.31982883  0.14573546  0.          0.15284706  0.08721141  0.
+      0.06441896  0.08658136 -0.12382309  0.10475627  0.61807958]
     LR coefficients with L1 regularization: 
     number_customer_service_calls: 0.6181
     intl_plan: 0.5714
     voice_mail_plan: -0.4052
-    total_day_minutes: 0.3498
-    total_day_charge: 0.3196
-    total_eve_charge: 0.1527
-    total_eve_minutes: 0.1459
+    total_day_minutes: 0.3495
+    total_day_charge: 0.3198
+    total_eve_charge: 0.1528
+    total_eve_minutes: 0.1457
     total_intl_calls: -0.1238
-    total_intl_charge: 0.1058
-    total_night_minutes: 0.0873
-    total_intl_minutes: 0.0856
-    total_night_charge: 0.0643
+    total_intl_charge: 0.1048
+    total_night_minutes: 0.0872
+    total_intl_minutes: 0.0866
+    total_night_charge: 0.0644
     account_length: 0.0157
     total_day_calls: 0.0105
     number_vmail_messages: 0.0
@@ -1289,24 +1476,33 @@ for k, v in sorted(zip(map(lambda x : round(x, 4), importances),
     print(v + ": " + str(k))
 ```
 
-    total_day_minutes: 0.1458
-    total_day_charge: 0.1415
-    number_customer_service_calls: 0.1175
-    intl_plan: 0.0881
-    total_eve_charge: 0.0648
-    total_eve_minutes: 0.0639
-    total_intl_calls: 0.0567
-    total_intl_charge: 0.0416
-    total_night_minutes: 0.0409
-    total_intl_minutes: 0.0405
-    total_night_charge: 0.0394
-    account_length: 0.0285
-    total_day_calls: 0.0281
-    total_night_calls: 0.0267
-    number_vmail_messages: 0.0265
-    voice_mail_plan: 0.0253
-    total_eve_calls: 0.0241
+    total_day_charge: 0.1493
+    total_day_minutes: 0.1397
+    number_customer_service_calls: 0.1166
+    intl_plan: 0.0916
+    total_eve_charge: 0.0661
+    total_eve_minutes: 0.0654
+    total_intl_calls: 0.0557
+    total_night_minutes: 0.0421
+    total_night_charge: 0.0395
+    total_intl_charge: 0.039
+    total_intl_minutes: 0.0374
+    account_length: 0.0294
+    number_vmail_messages: 0.0278
+    total_day_calls: 0.0276
+    total_night_calls: 0.0263
+    total_eve_calls: 0.0244
+    voice_mail_plan: 0.022
 
+
+We can conclude that 'total_day_minutes' and 'total_day_charge' play a relatively important in making the classification decision
+
+### Conclusion
+
+After comparing different models, we can see that boosting and tree based model tend to perform well. For gradient boosting, the number of estimators can aggressively affect the classification performances, the more estimators we set, the better the precision. However, there is a good chance that gradient boosting might overfit the training data. This happened when gradient boosting underperformed on testing data compared with XGboost.
+
+The factors that contribute the most on customer retention are 'total_day_charge', 'number_customer_service_calls' and 'total_day_minutes'. This is not unexpected and we can easily imply that
+customers who spend more money on calls would expect a better service and reliable network connection ,however, if the service isn't as good as they expected, they are more likely to complain and the number of customer service calls would definitely go up. 
 
 
 ```python
