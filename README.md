@@ -1,4 +1,4 @@
-'''
+
  **Description**
  
  This project utilized several supervised learning models to identify 
@@ -9,7 +9,6 @@
  The model formulated in this project would be suitable for predicting whether 
  a customer would or would not drop their subscriptions.
  
-'''
 
 
 ### Part 1 - Data Exploration 
